@@ -52,7 +52,7 @@ jobs:
 
     # 🔹 Upload result
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: vpnshare-apk
         path: app/build/outputs/apk/debug/app-debug.apk
