@@ -1,111 +1,114 @@
-# VPN Hotspot
+# VPN Share
 
-[![CircleCI](https://circleci.com/gh/Mygod/VPNHotspot.svg?style=shield)](https://circleci.com/gh/Mygod/VPNHotspot)
-[![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=28)
-[![Releases](https://img.shields.io/github/downloads/Mygod/VPNHotspot/total.svg)](https://github.com/Mygod/VPNHotspot/releases)
-[![Language: Kotlin](https://img.shields.io/github/languages/top/Mygod/VPNHotspot.svg)](https://github.com/Mygod/VPNHotspot/search?l=kotlin)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e70e52b1a58045819b505c09edcae816)](https://www.codacy.com/gh/Mygod/VPNHotspot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Mygod/VPNHotspot&amp;utm_campaign=Badge_Grade)
-[![License](https://img.shields.io/github/license/Mygod/VPNHotspot.svg)](LICENSE)
+![Android](https://img.shields.io/badge/Platform-Android-brightgreen)
+![Root Required](https://img.shields.io/badge/Root-Required-red)
+![License](https://img.shields.io/github/license/Mygod/VPNHotspot)
 
-[![Get it on Obtainium](https://github.com/ImranR98/Obtainium/raw/main/assets/graphics/badge_obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Mygod/VPNHotspot)
+A modified version of VPN Hotspot designed to share your VPN connection over hotspot or repeater.  
+This build focuses on personal use, customization, and fallback usage in environments where the original app may not be available.
 
-Connecting things to your VPN made simple. Share your VPN connection over hotspot or repeater. (**root required**)  
+---
+
+## ⚡ Overview
+
+VPN Share allows you to:
+
+- Share your VPN connection via Wi-Fi hotspot
+- Connect devices that don’t support VPN
+- Use VPN over tethering easily
+- Monitor and control connected clients
+- Improve compatibility in restricted environments
+
+> ⚠️ Root access is required for full functionality.
+
+---
+
+## 🎯 Use Cases
 
 This app is useful for:
 
-* Connecting things that don't support VPN like Chromecasts behind corporate firewalls;
-* Setting up [gapps](https://support.google.com/pixelphone/answer/7158475) behind corporate firewalls;
-* Connecting to your mobile hotspot but you're not bothered to set up VPN on your device;
-* Identifying, monitoring and blocking (unwanted) clients;
-* Bypassing tethering limits by:
-    - (recommended) Use this app with a real VPN/socksifier;
-    - Use this app with some adblock/DNS apps that uses system VPN service APIs, i.e. fake VPNs; ([troubleshooting/a list of apps that work](https://github.com/Mygod/VPNHotspot/discussions/216))
-    - Try your luck and simply use this app.
+- Connecting devices (TV, Chromecast, etc.) that don’t support VPN
+- Using VPN behind restricted or limited networks
+- Sharing VPN without configuring each device individually
+- Testing and experimenting with VPN tethering setups
+- Serving as an alternative build when the original app is unavailable or restricted
 
-P.S. You can also do the similar on [Windows](https://www.expressvpn.com/support/vpn-setup/share-vpn-connection-windows/),
-[Mac](https://www.expressvpn.com/support/vpn-setup/share-vpn-connection-mac/),
-and [iOS](http://www.tetherme.net/).
-I don't know about you but I can't get my stupid Windows 10 to work with
-[hosted network](https://msdn.microsoft.com/en-us/library/windows/desktop/dd815243(v=vs.85).aspx)
-now that they introduced this
-[Mobile hotspot](https://support.microsoft.com/en-us/help/4027762/windows-use-your-pc-as-a-mobile-hotspot).
+---
 
-## Features That Requires System App Installation
+## ⚙️ Features
 
-The following features in the app requires it to be installed under `/system/priv-app` since some restricted permissions are required.
-One way to do this is to use [App systemizer for Magisk](https://github.com/Magisk-Modules-Repo/terminal_systemizer).
+- VPN tethering over hotspot / repeater
+- Client monitoring & control
+- Flexible upstream interface selection
+- Works with real VPNs and system VPN-based apps
+- Advanced network routing options
 
-* (Android 8-10, since app v2.4.0) `android.permission.OVERRIDE_WIFI_CONFIG`: Read/write system Wi-Fi hotspot configuration. ([#117](https://github.com/Mygod/VPNHotspot/issues/117))
+---
 
-Installing as system app also has the side benefit of launching root daemon less frequently due to having privileged permissions listed below.
+## 🔐 System App Features (Optional)
 
-* `android.permission.CONNECTIVITY_USE_RESTRICTED_NETWORKS`
-* `android.permission.LOCAL_MAC_ADDRESS`
-* `android.permission.MANAGE_USB`
-* `android.permission.OVERRIDE_WIFI_CONFIG`
-* `android.permission.READ_WIFI_CREDENTIAL`
-* `android.permission.TETHER_PRIVILEGED`
-* `android.permission.WRITE_SECURE_SETTINGS`
+Some features require installation as a system app:
 
-Whenever you install an app update, if there was a new protected permission addition (last updated in v2.17.1), you should update the app installed in system as well to make the system grant the privileged permission.
+```
+/system/priv-app
+```
 
-## Settings and How to Use Them
+This enables privileged permissions such as:
 
-Default settings are picked to suit general use cases and maximize compatibility but it might not be optimal for battery
- life.
+- `TETHER_PRIVILEGED`
+- `WRITE_SECURE_SETTINGS`
+- `CONNECTIVITY_USE_RESTRICTED_NETWORKS`
+- `OVERRIDE_WIFI_CONFIG`
 
-### Upstream
+---
 
-* Upstream network interface: Main upstream regex used to reroute traffic.
-  Leave blank for auto detect system VPN (allow/do not bypass this app to use VPN for it to work).
-  Put `none` (or `a^` or other similarly invalid entries) to suppress tethering VPN.
-* Fallback upstream:
-  Fallback upstream is used when some VPN leave certain routes fallback to default network interface.
-  Leave blank for auto detect.
-  Put `none` (or `a^` or other similarly invalid entries) to forbid falling back.
-  Put other interface name if you feel like it.
-* IP Masquerade Mode:
-  - None:
-    Nothing will be done to remap address/port from downstream.
-    I find turning this option off sometimes works better for dummy VPNs like ad-blockers and socksifiers than Simple mode, e.g. Shadowsocks.
-    But you should never use this for real VPNs like OpenVPN, etc.
-  - Simple: Source address/port from downstream packets will be remapped and that's about it.
-  - Android Netd Service:
-    Let your system handle masquerade.
-    Android system will do a few extra things to make things like FTP and tethering traffic counter work.
-    You should probably not use this if you are trying to hide your tethering activity from your carrier.
+## 🛠️ Notes
 
-### Downstream
+- This project is intended for **learning, customization, and personal use**
+- Behavior may vary depending on device, ROM, and Android version
+- Some features depend on system-level APIs and root access
 
-* Disable IPv6 tethering: Turning this option on will disable IPv6 for system tethering. Useful for stopping IPv6 leaks
-  as this app currently doesn't handle IPv6 VPN tethering (see [#6](https://github.com/Mygod/VPNHotspot/issues/6)).
-* Tethering hardware acceleration:
-    This is a shortcut to the same setting in system Developer options.
-    Turning this option off is probably a must for making VPN tethering over system tethering work,
-     but it might also decrease your battery life while tethering is enabled.
-* Enable DHCP workaround:
-    Only used if your device isn't able to get your clients IP addresses with VPN on.
-    This is a global setting, meaning it will only be applied once globally.
+---
 
-### Misc
+## 🙏 Credits
 
-* Keep Wi-Fi alive: Acquire Wi-Fi locks when repeater, temporary hotspot or system VPN hotspot is activated.
-   - Choose "System default" (default since Android 10) to save battery life;
-   - (prior to Android 10) Choose "On" (default) if repeater/hotspot turns itself off automatically or stops working after a while;
-   - (prior to Android 10) Choose "High Performance Mode" to minimize packet loss and latency (will consume more power);
-   - (since Android 10) Choose "Disable power save" to decrease packet latency.
-     An example use case is when a voice connection needs to be kept active even after the device screen goes off.
-     Using this mode may improve the call quality.
-     Requires support from the hardware.
-     Deprecated in Android 14 and is automatically replaced with "Low latency mode".
-     Deprecation is due to the impact of it on power dissipation.
-     The "Low latency mode" provides much of the same desired functionality with less impact on power dissipation.
-   - (since Android 10) Choose "Low latency mode" to optimize for reduced packet latency, and this might result in:
-     1. Reduced battery life.
-     2. Reduced throughput.
-     3. Reduced frequency of Wi-Fi scanning.
-        This may cause the device not roaming or switching to the AP with highest signal quality, and location accuracy may be reduced.
-     Example use cases are real time gaming or virtual reality applications where low latency is a key factor for user experience.
+This project is based on the original work:
+
+👉 https://github.com/Mygod/VPNHotspot
+
+- **Original Developer:** Mygod  
+- All core logic, networking implementation, and foundational work belong to the original author
+
+---
+
+## 🤖 Modifications & Build
+
+- Package renamed and customized
+- App name and branding updated
+- Build system adapted for GitHub Actions automation
+- UI and assets modified (icon, naming, etc.)
+
+This modified build was created with the assistance of ChatGPT for guidance, automation, and structuring.
+
+---
+
+## ⚠️ Disclaimer
+
+This project is a modified version intended for:
+
+- Educational purposes  
+- Personal use  
+- Custom builds and experimentation  
+
+All credit for the original functionality belongs to the original developer.  
+This repository does not claim ownership of the original project.
+
+---
+
+## 📌 Final Note
+
+If possible, please support the original project and developer.  
+This version exists to extend usability and flexibility in specific scenarios.     Example use cases are real time gaming or virtual reality applications where low latency is a key factor for user experience.
      Requires support from the hardware.
      Note: Requires this app running in foreground with screen on.
 * Start repeater on boot: Self explanatory.
