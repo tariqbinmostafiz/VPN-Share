@@ -20,29 +20,49 @@ jobs:
     - name: Grant execute permission
       run: chmod +x gradlew
 
-    # 🔹 Package rename (global replace)
+    # 🔹 Package rename (global)
     - name: Replace package name
       run: |
         OLD="be.mygod.vpnhotspot"
         NEW="com.shifat.vpnshare"
 
-        echo "Replacing package name..."
+        echo "Replacing package..."
         grep -rl "$OLD" . | xargs sed -i "s/$OLD/$NEW/g"
 
-    # 🔹 Fix directory structure (important)
+    # 🔹 Fix JNI naming (CRITICAL FIX)
+    - name: Fix JNI naming
+      run: |
+        OLD_JNI="Java_com.shifat.vpnshare"
+        NEW_JNI="Java_com_shifat_vpnshare"
+
+        echo "Fixing JNI..."
+        grep -rl "$OLD_JNI" mobile/src/main/cpp | xargs sed -i "s/$OLD_JNI/$NEW_JNI/g" || true
+
+    # 🔹 Fix directory structure
     - name: Fix package directories
       run: |
-        mkdir -p app/src/main/java/com/shifat
-        if [ -d "app/src/main/java/be/mygod/vpnhotspot" ]; then
-          mv app/src/main/java/be/mygod/vpnhotspot app/src/main/java/com/shifat/vpnshare
+        mkdir -p mobile/src/main/java/com/shifat/vpnshare
+        if [ -d "mobile/src/main/java/be/mygod/vpnhotspot" ]; then
+          mv mobile/src/main/java/be/mygod/vpnhotspot mobile/src/main/java/com/shifat/vpnshare
         fi
 
     # 🔹 Change app name
     - name: Change app name
       run: |
-        sed -i 's/VPN Hotspot/VPN Share/g' app/src/main/res/values/strings.xml || true
+        sed -i 's/VPN Hotspot/VPN Share/g' mobile/src/main/res/values/strings.xml || true
 
-    # 🔹 Clean build (avoid cache issue)
+    # 🔹 (Optional) Replace app icon
+    - name: Replace app icon
+      run: |
+        ICON=assets/icon.png
+        if [ -f "$ICON" ]; then
+          for dir in mobile/src/main/res/mipmap-*; do
+            cp $ICON $dir/ic_launcher.png || true
+            cp $ICON $dir/ic_launcher_round.png || true
+          done
+        fi
+
+    # 🔹 Clean build
     - name: Clean project
       run: ./gradlew clean
 
@@ -50,9 +70,9 @@ jobs:
     - name: Build Debug APK
       run: ./gradlew assembleDebug
 
-    # 🔹 Upload result
+    # 🔹 Upload APK
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: vpnshare-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: mobile/build/outputs/apk/debug/mobile-debug.apk
