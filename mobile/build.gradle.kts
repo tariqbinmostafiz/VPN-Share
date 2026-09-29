@@ -227,7 +227,7 @@ android {
     }
     compileSdk = 37
     defaultConfig {
-        applicationId = "be.mygod.vpnhotspot"
+        applicationId = "com.shifat.vpnshare"
         minSdk = 29
         targetSdk = 37
         versionCode = 2011
