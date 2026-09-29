@@ -1,4 +1,4 @@
-name: Build VPN Share APK
+name: Build VPN Share Release APK
 
 on:
   workflow_dispatch:
@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -24,12 +26,12 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew :mobile:assembleDebug --stacktrace
+      - name: Build Release APK
+        run: ./gradlew :mobile:assembleRelease --stacktrace
 
-      - name: Upload APK
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: vpnshare-debug-apk
-          path: mobile/build/outputs/apk/debug/*.apk
+          name: vpnshare-release-apk
+          path: mobile/build/outputs/apk/release/*.apk
           if-no-files-found: error
